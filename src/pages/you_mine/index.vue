@@ -4,10 +4,12 @@
     <div class="top-box">
       <div class="avatar">
         <i class="iconfont icon-shezhi"></i>
-        <img src="/static/icon/icon.png" alt>
+        <button open-type="getUserInfo" @getuserinfo="onGotUserInfo">
+          <img :src="avatarUrl">
+        </button>
         <i class="iconfont icon-xiaoxi"></i>
       </div>
-      <p>登录/注册</p>
+      <p>{{nickName}}登录/注册</p>
     </div>
     <div class="body-wrap">
       <!-- 历史记录 -->
@@ -53,13 +55,13 @@
       </div>
       <!-- 选项卡 -->
       <div class="option-box">
-        <div class="option">
+        <div class="option" @click='getAddress'>
           收货地址管理
           <i class="iconfont icon-jiantouyou"></i>
-        </div>        
+        </div>
       </div>
       <div class="option-box">
-        <div class="option">
+        <div class="option" @click="callKF">
           联系客服
           <i>400-618-40000</i>
         </div>
@@ -81,8 +83,38 @@ export default {
   data() {
     return {
       // 记录用户名字
-      username: ""
+      nickName: "",
+      avatarUrl: "/static/icon/icon.png"
     };
+  },
+  methods: {
+    // 获取用户信息
+    onGotUserInfo(e) {
+      // console.log(e);
+      this.avatarUrl = e.target.userInfo.avatarUrl;
+      this.nickName = e.target.userInfo.nickName;
+    },
+    // 获取收获地址
+    getAddress() {
+      wx.chooseAddress({
+        success(res) {
+          console.log(res.userName);
+          console.log(res.postalCode);
+          console.log(res.provinceName);
+          console.log(res.cityName);
+          console.log(res.countyName);
+          console.log(res.detailInfo);
+          console.log(res.nationalCode);
+          console.log(res.telNumber);
+        }
+      });
+    },
+    // 拨打电话
+    callKF() {
+      wx.makePhoneCall({
+        phoneNumber: "400-618-40000" // 仅为示例，并非真实的电话号码
+      });
+    }
   }
 };
 </script>
@@ -102,12 +134,17 @@ $uRed: #eb4450;
       justify-content: center;
       align-items: center;
       font-size: 30rpx;
-      img {
+      button {
         margin: 0 65rpx;
         width: 135rpx;
         height: 135rpx;
         border: 5rpx solid #fff;
         border-radius: 50%;
+        padding: 0;
+        img {
+          width: 100%;
+          height: 100%;
+        }
       }
     }
     p {
@@ -186,7 +223,6 @@ $uRed: #eb4450;
         }
       }
     }
-    
   }
 }
 </style>
